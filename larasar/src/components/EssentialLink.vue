@@ -3,7 +3,7 @@
     clickable
     tag="a"
     target="_blank"
-    :href="link"
+    @click="goto(link)"
   >
     <q-item-section
       v-if="icon"
@@ -23,6 +23,7 @@
 
 <script>
 import { defineComponent } from 'vue'
+import {useRouter} from 'vue-router';
 
 export default defineComponent({
   name: 'EssentialLink',
@@ -46,6 +47,25 @@ export default defineComponent({
       type: String,
       default: ''
     }
+  },
+
+  setup(){
+    const router = useRouter()
+    let goto = (name) => {
+      if (router.name !== name) {
+          router.push(
+          {
+              name: name
+          }
+          )
+      }else{
+        
+      }
+    }
+    return{
+      goto, router
+    }
   }
+
 })
 </script>
