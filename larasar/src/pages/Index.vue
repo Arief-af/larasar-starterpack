@@ -31,7 +31,7 @@
 
 <script>
 import { defineComponent, reactive, ref } from 'vue';
-import axios from 'axios'
+import { api } from 'boot/axios'
 export default defineComponent({
   name: 'PageIndex',
   setup(){
@@ -42,7 +42,7 @@ export default defineComponent({
     dataUsers.value.push(1)
     console.log(dataUsers.value);
 
-    axios.get('http://localhost:8000/api/tes')
+    api.get('/api/tes')
     .then((result) => {
       // handle success
       dataUsers.value = result.data.data
@@ -56,7 +56,7 @@ export default defineComponent({
 
     function onSubmit() {
        console.log('tes');
-       axios.post('http://localhost:8000/api/kirim',{
+       api.post('/api/kirim',{
          name: user.value.name,
          email: user.value.email,
          password: user.value.password
