@@ -40,8 +40,10 @@
 <script>
 import {ref} from 'vue'
 import { api } from 'boot/axios'
+import { useQuasar } from 'quasar'
 export default {
     setup() {
+        const $q = useQuasar()
         const user = ref([])
         const errors = ref([])
         function onReset() {
@@ -57,6 +59,11 @@ export default {
                 password_confirmation: user.value.password_confirmation,
             }).then(() => {
                 user.value = []
+                $q.notify({
+                    message: 'Successfully registered',
+                    icon: 'mark_email_read',
+                    color: 'green'
+                })
             }).catch((error) => {
                 errors.value = error.response.data.errors
                 errors.value['password_confirmation'] = ["Password confirmation didn't match"]
