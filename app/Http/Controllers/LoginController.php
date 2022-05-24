@@ -23,7 +23,10 @@ class LoginController extends Controller
         ]);
     }
  
-    return $user->createToken('browser')->plainTextToken;
+    return response()->json([
+        'token' => $user->createToken('browser')->plainTextToken,
+        'user' => $user
+    ]);
    }
 
    public function logout(Request $request)

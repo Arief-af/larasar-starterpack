@@ -1,6 +1,7 @@
 <template>
     <div class="q-pa-lg ">
-        {{ errors }}
+        
+        {{ errors }} <!-- log -->
         <q-form
             @submit="onSubmit"
             @reset="onReset"
@@ -44,21 +45,16 @@ export default {
             user.value = []
         }
         function onSubmit() {
-            console.log('submit');
             api.post('/api/login',{
                 username: user.value.username,
                 password: user.value.password
             }).then((response) => {
-               console.log(response);
-               localStorage.setItem('token',response.data)
-               $store.commit('user/setToken', response.data)
-               console.log(response.data);
+               localStorage.setItem('token',response.data.token)
+               $store.commit('user/setUser', response.data.user)
                router.push({ name: 'index' })
             }).catch((error) => {
-                // console.log(error.response.data);
                 errors.value = error.response.data.errors
             })
-            console.log('submit');
         }
         return {
             user,onReset,onSubmit,errors,loginLog,router    

@@ -56,14 +56,11 @@ export default {
                 password: user.value.password,
                 password_confirmation: user.value.password_confirmation,
             }).then(() => {
-                console.log('saved');
                 user.value = []
             }).catch((error) => {
-                // console.log(error.response.data);
                 errors.value = error.response.data.errors
                 errors.value['password_confirmation'] = ["Password confirmation didn't match"]
             })
-            console.log('submit');
         }
         return {
             user,onReset,onSubmit,errors

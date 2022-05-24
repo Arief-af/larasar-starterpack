@@ -1,15 +1,26 @@
 <template>
   <q-page class=" q-pa-lg">
-    <q-btn color="primary" icon="check" label="logout" @click="logout" />
-    <q-btn color="primary" icon="check" :label="likes" @click="addLike" />
-    
-    <div class="userCard q-pa-lg shadow-6 q-my-lg" v-for="(user, index) in dataUsers" :key="user.index">
-      {{ user }}
-      <q-btn color="primary" icon="check" label="OK" @click="destroy(index)" />
-    </div>
 
-    <div class="userCard q-pa-lg shadow-6 q-my-lg" v-for="(item, index) in log" :key="log.index">
-      {{ item }}
+    <div class="userCard q-pa-lg shadow-6 q-my-lg">
+      Data from auth
+      <div class="q-my-md">
+        {{ currentUser }}
+      </div>
+    </div>
+    
+   <q-card class="my-card">
+     <q-card-actions class="q-pl-md">
+      State button
+     </q-card-actions>
+     <q-card-section>
+       <q-btn color="primary" icon="check" label="logout" @click="logout" />
+       <q-btn class="q-ml-sm" color="primary" icon="check" :label="likes" @click="addLike" />
+     </q-card-section>
+   </q-card>
+    
+    <div class="userCard q-pa-lg shadow-6 q-my-lg" v-for="(user, index) in users" :key="user.index">
+       <q-btn color="primary" icon="delete" label="" @click="destroy(index)" />
+      {{ user }}
     </div>
 
     <q-form
@@ -40,37 +51,29 @@ export default defineComponent({
   name: 'PageIndex',
   setup(){
     const router = useRouter()
-    const log = ref([1,2,3,4])
-    let dataUsers = ref([])
+    let users = ref([])
     const user = ref([])
-
-    dataUsers.value.push(1)
-    console.log(dataUsers.value);
+    const $store = useStore()
+    const currentUser = $store.state.user.user
 
     api.get('/api/tes')
     .then((result) => {
       // handle success
-      dataUsers.value = result.data.data
-      console.log(dataUsers.value);
+      users.value = result.data.data
     })
 
     function onReset() {
-      console.log('reset');
       user.value = []
     }
 
     function onSubmit() {
-       console.log('tes');
        api.post('/api/kirim',{
          name: user.value.name,
          email: user.value.email,
          password: user.value.password
        }).then(function (response) {
         // handle success
-        console.log(response.data.data);
-        log.value.push(1);
-        console.log(log.value);
-        dataUsers.value.push(response.data.data);
+        users.value.push(response.data.data);
         user.value = '';
       })
     }
@@ -78,7 +81,7 @@ export default defineComponent({
     function logout() {      
       api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
       api.post('/api/logout')
-      .then((response)=>{
+      .then(()=>{
         localStorage.removeItem('token')
         router.push({
           name: 'Login'
@@ -87,20 +90,20 @@ export default defineComponent({
     }
 
     function destroy(id) {
-      dataUsers.value.splice(id, 1);
+      users.value.splice(id, 1);
     }
 
-    const $store = useStore()
+    
     const likes = computed(()=>{
       return $store.state.user.totalLikes;
     })
   
     const addLike = () => {
-      console.log($store.state);
       $store.commit('user/increment')
     }
+    
     return {
-      dataUsers,onSubmit,user,onReset,log,destroy,addLike,likes,logout
+      currentUser,users,onSubmit,user,onReset,destroy,addLike,likes,logout
     }
   }
 })
