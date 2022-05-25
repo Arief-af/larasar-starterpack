@@ -51,7 +51,8 @@ export default route(function (/* { store, ssrContext } */) {
           } else {
               next()
           }
-      } else {
+      } 
+      else {
           next() // make sure to always call next()!
       }
   })
