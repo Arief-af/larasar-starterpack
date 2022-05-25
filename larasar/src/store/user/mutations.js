@@ -6,4 +6,12 @@ export function setUser(state, user) {
     state.user = user
 }
 
+export function logout(state) {
+    state.user = null
+}
+
+export function darkMode(state, dark) {
+    state.dark = dark
+}
+
 

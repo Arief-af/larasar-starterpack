@@ -1,21 +1,23 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header class="bg-warning" elevated>
       <q-toolbar>
         <q-btn
           flat
           dense
           round
+          color="white"
           icon="menu"
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
 
         <q-toolbar-title>
-          Quasar App
+         <div class="text-white">Quasar App</div> 
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <q-btn style="color: #26A69A !important;" color="white" icon="logout" label="Logout" @click="logout"/>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -47,6 +49,9 @@
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
+import {useStore} from 'vuex'
+import {api} from 'boot/axios'
+import {useRouter} from 'vue-router'
 
 import { defineComponent, ref } from 'vue'
 
@@ -58,6 +63,20 @@ export default defineComponent({
   },
 
   setup () {
+    api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
+    const $store = useStore()
+    const router = useRouter()
+    function logout() {
+      api.post('/api/logout')
+      .then(()=>{
+        api.defaults.headers.common["Authorization"] = null;
+        localStorage.removeItem('token')
+        $store.commit('user/setUser', null)
+        router.push({
+          name: 'Login'
+        })
+      })
+    }
     const leftDrawerOpen = ref(false)
     const linksList = [
       {
@@ -79,7 +98,7 @@ export default defineComponent({
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      },logout
     }
   }
 })

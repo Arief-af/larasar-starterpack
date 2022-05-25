@@ -13,17 +13,27 @@
       State button
      </q-card-actions>
      <q-card-section>
-       <q-btn color="primary" icon="check" label="logout" @click="logout" />
-       <q-btn class="q-ml-sm" color="primary" icon="check" :label="likes" @click="addLike" />
+       <!-- <q-btn color="primary" icon="check" label="logout" @click="logout" /> -->
+       <q-btn class="q-ml-sm" color="warning" icon="check" :label="likes" @click="addLike" />
+     </q-card-section>
+   </q-card>
+
+   <q-card class="my-card">
+     <q-card-actions class="q-pl-md q-mt-lg">
+      Data Tabel
+     </q-card-actions>
+     <q-card-section>
+       <!-- <q-btn color="primary" icon="check" label="logout" @click="logout" /> -->
+       <q-btn class="q-ml-sm" color="warning" @click="goto('Table')" icon="home" label="Room" />
      </q-card-section>
    </q-card>
     
-    <div class="userCard q-pa-lg shadow-6 q-my-lg" v-for="(user, index) in users" :key="user.index">
+    <!-- <div class="userCard q-pa-lg shadow-6 q-my-lg" v-for="(user, index) in users" :key="user.index">
        <q-btn color="primary" icon="delete" label="" @click="destroy(index)" />
       {{ user }}
-    </div>
+    </div> -->
 
-    <q-form
+    <!-- <q-form
       @submit="onSubmit"
       class="q-gutter-md"
     >
@@ -36,7 +46,7 @@
        <q-btn label="Submit" type="submit" color="primary"/>
        <q-btn label="Reset" @click="onReset" type="reset" color="primary" flat class="q-ml-sm" />
      </div>
-   </q-form>
+   </q-form> -->
 
   </q-page>
 </template>
@@ -56,42 +66,31 @@ export default defineComponent({
     const $store = useStore()
     const currentUser = $store.state.user.user
 
-    api.get('/api/tes')
-    .then((result) => {
-      // handle success
-      users.value = result.data.data
-    })
+    // api.get('/api/tes')
+    // .then((result) => {
+    //   // handle success
+    //   users.value = result.data.data
+    // })
 
-    function onReset() {
-      user.value = []
-    }
+    // function onReset() {
+    //   user.value = []
+    // }
 
-    function onSubmit() {
-       api.post('/api/kirim',{
-         name: user.value.name,
-         email: user.value.email,
-         password: user.value.password
-       }).then(function (response) {
-        // handle success
-        users.value.push(response.data.data);
-        user.value = '';
-      })
-    }
+    // function onSubmit() {
+    //    api.post('/api/kirim',{
+    //      name: user.value.name,
+    //      email: user.value.email,
+    //      password: user.value.password
+    //    }).then(function (response) {
+    //     // handle success
+    //     users.value.push(response.data.data);
+    //     user.value = '';
+    //   })
+    // }
 
-    function logout() {      
-      api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
-      api.post('/api/logout')
-      .then(()=>{
-        localStorage.removeItem('token')
-        router.push({
-          name: 'Login'
-        })
-      })
-    }
-
-    function destroy(id) {
-      users.value.splice(id, 1);
-    }
+    // function destroy(id) {
+    //   users.value.splice(id, 1);
+    // }
 
     
     const likes = computed(()=>{
@@ -102,8 +101,20 @@ export default defineComponent({
       $store.commit('user/increment')
     }
     
+    let goto = (name) => {
+      if (router.name !== name) {
+          router.push(
+          {
+              name: name
+          }
+          )
+      }else{
+        
+      }
+    }
+    
     return {
-      currentUser,users,onSubmit,user,onReset,destroy,addLike,likes,logout
+      currentUser,users,user,addLike,likes,goto
     }
   }
 })

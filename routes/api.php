@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\RoomController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/room',[RoomController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/room',[RoomController::class, 'index'])->middleware('auth:sanctum');
+Route::delete('/room/{id}',[RoomController::class, 'destroy'])->middleware('auth:sanctum');
+Route::put('/room/{id}/update',[RoomController::class, 'update'])->middleware('auth:sanctum');
 Route::post('/register',[RegisterController::class, 'index']);
 Route::post('/login',[LoginController::class, 'index']);
 Route::post('/logout',[LoginController::class, 'logout'])->middleware('auth:sanctum');
