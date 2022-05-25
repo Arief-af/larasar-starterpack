@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title>
-         <div class="text-white">Quasar App</div> 
+         <div class="text-white">Larasar</div> 
         </q-toolbar-title>
         <div>
           <q-btn style="color: #26A69A !important;" color="white" icon="logout" label="Logout" @click="logout"/>
