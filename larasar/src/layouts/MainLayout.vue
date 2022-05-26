@@ -15,7 +15,7 @@
         <q-toolbar-title>
          <div class="text-white">Larasar</div> 
         </q-toolbar-title>
-        <div>
+        <div v-if="user">
           <q-btn style="color: #26A69A !important;" color="white" icon="logout" label="Logout" @click="logout"/>
         </div>
       </q-toolbar>
@@ -53,7 +53,7 @@ import {useStore} from 'vuex'
 import {api} from 'boot/axios'
 import {useRouter} from 'vue-router'
 
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -63,8 +63,12 @@ export default defineComponent({
   },
 
   setup () {
-    api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
+    const token = localStorage.getItem("token");
+    api.defaults.headers.common["Authorization"] = "Bearer " + token;
     const $store = useStore()
+    const user = computed(()=>{
+      return $store.state.user.user;
+    })
     const router = useRouter()
     function logout() {
       api.post('/api/logout')
@@ -98,7 +102,7 @@ export default defineComponent({
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      },logout
+      },logout,token,user
     }
   }
 })

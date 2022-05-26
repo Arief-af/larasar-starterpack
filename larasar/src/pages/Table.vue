@@ -70,6 +70,7 @@ export default {
     const rooms = ref([])
     api.get('/api/room').then((response) => {
         rooms.value = response.data.data
+        console.log(response.data.data);
     })
     const columns = [
     {
