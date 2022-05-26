@@ -52,14 +52,16 @@
 </template>
 
 <script>
-import { defineComponent,cumputed, reactive, ref, computed } from 'vue';
+import { defineComponent,cumputed, watch, ref, computed } from 'vue';
 import { api } from 'boot/axios'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'PageIndex',
   setup(){
+    const $q = useQuasar()
     const router = useRouter()
     let users = ref([])
     const user = ref([])
@@ -92,7 +94,16 @@ export default defineComponent({
     //   users.value.splice(id, 1);
     // }
 
-    
+    const stateDarkMode = computed(()=>{
+      return $store.state.user.dark;
+    })
+    watch(  () => {
+       if (stateDarkMode.value == true) {
+            $q.dark.set(true) 
+       }else{
+           $q.dark.set(false) 
+       }
+     })
     const likes = computed(()=>{
       return $store.state.user.totalLikes;
     })

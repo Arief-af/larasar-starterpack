@@ -10,8 +10,8 @@ export function logout(state) {
     state.user = null
 }
 
-export function darkMode(state, dark) {
-    state.dark = dark
+export function darkMode(state, value) {
+    state.dark = value
 }
 
 

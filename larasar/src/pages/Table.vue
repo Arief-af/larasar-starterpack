@@ -53,18 +53,25 @@
 import { useQuasar } from 'quasar';
 import { api } from 'boot/axios';
 import { ref,onMounted,computed,onUpdated, reactive, watch } from 'vue';
-
+import { useStore } from 'vuex'
 
 export default {
   setup () {
     api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
-    const darkMode = ref(false)
+    const $store = useStore();
+    const stateDarkMode = computed(()=>{
+      return $store.state.user.dark;
+    })
+    let darkMode = ref()
+    darkMode.value = stateDarkMode.value
     const $q = useQuasar()
     watch(  () => {
        if (darkMode.value == true) {
             $q.dark.set(true) 
+            $store.commit('user/darkMode', true)
        }else{
            $q.dark.set(false) 
+           $store.commit('user/darkMode', false)
        }
      })
     const rooms = ref([])
