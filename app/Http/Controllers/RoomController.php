@@ -5,11 +5,15 @@ use Illuminate\Support\Str;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
     public function index(){
-        $data = Room::all();
+        $data = DB::table('rooms')
+        ->join('users', 'users.id', '=', 'rooms.user_id')
+        ->select('rooms.*', 'users.username')
+        ->get();
         return response()->json([
             'data' => $data
         ]);

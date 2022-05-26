@@ -59,11 +59,11 @@ export default {
   setup () {
     api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
     const $store = useStore();
-    const stateDarkMode = computed(()=>{
-      return $store.state.user.dark;
+    const state = computed(()=>{
+      return $store.state.user;
     })
     let darkMode = ref()
-    darkMode.value = stateDarkMode.value
+    darkMode.value = state.value.dark
     const $q = useQuasar()
     watch(  () => {
        if (darkMode.value == true) {
@@ -77,7 +77,7 @@ export default {
     const rooms = ref([])
     api.get('/api/room').then((response) => {
         rooms.value = response.data.data
-        console.log(response.data.data);
+        // console.log(response.data);
     })
     const columns = [
     {
@@ -89,9 +89,10 @@ export default {
         format: val => `${val}`,
         sortable: true
     },
-    { name: 'id',  label: 'ID', field: 'id', sortable: true, },
-    { name: 'user_id', align: 'center',  label: 'User ID', field: 'user_id', sortable: true, },
-    { name: 'token',  align: 'center', label: 'Token', field: 'token', sortable: true , },
+    { name: 'id',align: 'left',  label: 'ID', field: 'id', sortable: true, },
+    { name: 'user_id', align: 'left',  label: 'User ID', field: 'user_id', sortable: true, },
+    { name: 'username', align: 'left',  label: 'username', field: 'username', sortable: true, },
+    { name: 'token',  align: 'left', label: 'Token', field: 'token', sortable: true , },
     { name: 'actions', label: 'Actions', field: '', align:'center' },
     ]
 
@@ -143,7 +144,9 @@ export default {
         api.post('/api/room',{
             name: room.value.name,
         }).then((response) => {
-            rooms.value.push(response.data.data);
+            const newData =  response.data.data
+            newData['username'] = state.value.username
+            rooms.value.push(newData);
             room.value = []
             $q.notify({
                 message: 'Room created',
