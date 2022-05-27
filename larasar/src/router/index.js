@@ -27,6 +27,7 @@ export default route(function (/* { store, ssrContext } */) {
   })
 
   function loggedIn(){
+    // api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
     return localStorage.getItem('token')
   }
 

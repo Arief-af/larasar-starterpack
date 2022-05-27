@@ -64,7 +64,7 @@ export default defineComponent({
 
   setup () {
     const token = localStorage.getItem("token");
-    api.defaults.headers.common["Authorization"] = "Bearer " + token;
+    // api.defaults.headers.common["Authorization"] = "Bearer " + token;
     const $store = useStore()
     const user = computed(()=>{
       return $store.state.user.user;

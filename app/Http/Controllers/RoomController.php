@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\DB;
 class RoomController extends Controller
 {
     public function index(){
-        $data = DB::table('rooms')
-        ->join('users', 'users.id', '=', 'rooms.user_id')
-        ->select('rooms.*', 'users.username')
-        ->get();
+        // $data = DB::table('rooms')
+        // ->join('users', 'users.id', '=', 'rooms.user_id')
+        // ->select('rooms.*', 'users.username')
+        // ->get();
+
+        $room = Room::query()->with('user');
+        $data = $room->get();
         return response()->json([
             'data' => $data
         ]);

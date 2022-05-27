@@ -57,7 +57,7 @@ import { useStore } from 'vuex'
 
 export default {
   setup () {
-    api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
+    // api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
     const $store = useStore();
     const state = computed(()=>{
       return $store.state.user;
@@ -75,10 +75,12 @@ export default {
        }
      })
     const rooms = ref([])
-    api.get('/api/room').then((response) => {
-        rooms.value = response.data.data
-        // console.log(response.data);
-    })
+    function fetchData() {
+       api.get('/api/room').then((response) => {
+          rooms.value = response.data.data
+       })
+    }
+    fetchData()
     const columns = [
     {
         name: 'name',
@@ -91,7 +93,7 @@ export default {
     },
     { name: 'id',align: 'left',  label: 'ID', field: 'id', sortable: true, },
     { name: 'user_id', align: 'left',  label: 'User ID', field: 'user_id', sortable: true, },
-    { name: 'username', align: 'left',  label: 'username', field: 'username', sortable: true, },
+    { name: 'username', align: 'left',  label: 'username', field: row => row.user.username, sortable: true, },
     { name: 'token',  align: 'left', label: 'Token', field: 'token', sortable: true , },
     { name: 'actions', label: 'Actions', field: '', align:'center' },
     ]
@@ -107,14 +109,12 @@ export default {
         cancel: true,
         persistent: true
       }).onOk(data => {
-       console.log(data);
        api.put(`/api/room/${room.id}/update`,{
            name: data
-       }).then((response)=>{
-           rooms.value[i] = response.data.data
+       }).then(()=>{
+           fetchData()
        })
       }).onCancel(() => {
-        // console.log('>>>> Cancel')
       })
     }
     
@@ -129,14 +129,12 @@ export default {
         const i = rooms.value.indexOf(params.row)
         rooms.value.splice(i,1);
         api.delete(`/api/room/${params.row.id}`).then((response)=>{
-            console.log(response);
             $q.notify({
                 message: 'Room has been deleted',
                 icon: 'bolt',
                 color: 'warning'
             })
         })
-        console.log(params.row);
     }
     const room = ref([])
     const errors = ref([])
@@ -144,9 +142,7 @@ export default {
         api.post('/api/room',{
             name: room.value.name,
         }).then((response) => {
-            const newData =  response.data.data
-            newData['username'] = state.value.username
-            rooms.value.push(newData);
+            fetchData()
             room.value = []
             $q.notify({
                 message: 'Room created',

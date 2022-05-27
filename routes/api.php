@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RoomController;
+use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,10 +32,11 @@ Route::post('/register',[RegisterController::class, 'index']);
 Route::post('/login',[LoginController::class, 'index']);
 Route::post('/logout',[LoginController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/tes', function(){
-    $user = User::all();
+    $user = Room::query()->with('user');
+    $users = $user->where('id',25)->get();
     $response = [
-        'message' => 'list users',
-        'data' => $user
+        'message' => 'list rooms',
+        'data' => $users
     ];
     return response()->json($response, Response::HTTP_OK);
 });
