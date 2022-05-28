@@ -81,6 +81,21 @@ export default {
        })
     }
     fetchData()
+    onMounted(()=>{
+      window.Echo.channel('room').listen('RoomCreated',(event) => {
+        console.log(event.room);
+        rooms.value.push(event.room)
+      });
+
+      window.Echo.channel('room-deleted').listen('RoomDeleted',(event) => {
+        console.log('kl');
+        const i = rooms.value.indexOf(event.room.id)
+        console.log(i);
+        rooms.value.splice(i,1);
+        
+        // rooms.value.push(event)
+      });
+    })
     const columns = [
     {
         name: 'name',
@@ -127,6 +142,7 @@ export default {
 
     function deleteRow(params) {
         const i = rooms.value.indexOf(params.row)
+        // console.log(params.row);
         rooms.value.splice(i,1);
         api.delete(`/api/room/${params.row.id}`).then((response)=>{
             $q.notify({
@@ -142,7 +158,7 @@ export default {
         api.post('/api/room',{
             name: room.value.name,
         }).then((response) => {
-            fetchData()
+            // fetchData()
             room.value = []
             $q.notify({
                 message: 'Room created',

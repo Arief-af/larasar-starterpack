@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Events\RoomCreated;
+use App\Events\RoomDeleted;
 use Illuminate\Support\Str;
 use App\Models\Room;
 use Illuminate\Http\Request;
@@ -27,15 +30,18 @@ class RoomController extends Controller
     $request->validate([
         'name' => 'required'
     ]);
-
-    $data = Room::create([
+    $query = Room::query()->with('user');
+    $data = $query->create([
         'user_id' => Auth::user()->id,
         'token' => Str::random(5),
         'name' => $request->name
     ]);
+    
+    $response = $query->find($data->id);
+    RoomCreated::dispatch($response);
  
     return response()->json([
-        'data' => $data
+        'data' => $response
     ]);
    }
 
@@ -59,8 +65,11 @@ class RoomController extends Controller
    }
 
    public function destroy($id){
-       $data = Room::find($id);
+       $query = Room::query()->with('user');
+       $data = $query->find($id);
+       RoomDeleted::dispatch($data);
        $data->delete();
+       
        return response()->json([
             'msg' => "data berhasil dihapus",
             'data' => $data

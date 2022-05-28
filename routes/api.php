@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\RoomCreated;
+use App\Events\RoomDeleted;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RoomController;
@@ -32,13 +34,7 @@ Route::post('/register',[RegisterController::class, 'index']);
 Route::post('/login',[LoginController::class, 'index']);
 Route::post('/logout',[LoginController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/tes', function(){
-    $user = Room::query()->with('user');
-    $users = $user->where('id',25)->get();
-    $response = [
-        'message' => 'list rooms',
-        'data' => $users
-    ];
-    return response()->json($response, Response::HTTP_OK);
+    RoomDeleted::dispatch('kamu bohong');
 });
 
 Route::post('/kirim',function(Request $request){
