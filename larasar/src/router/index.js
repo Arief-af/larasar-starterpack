@@ -1,7 +1,8 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
-
+import {api} from 'boot/axios'
+import createPersistedState from "vuex-persistedstate";
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation;
@@ -24,6 +25,40 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE)
+  })
+
+  function loggedIn(){
+    // api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
+    return localStorage.getItem('token')
+  }
+
+  Router.beforeEach((to, from, next) => {
+      if (to.matched.some(record => record.meta.requiresAuth)) {
+          // this route requires auth, check if logged in
+          // if not, redirect to login page.
+          if (!loggedIn()) {
+              localStorage.removeItem("token");
+              next({
+              path: '/login',
+              query: { redirect: to.fullPath }
+              })
+          } else {
+              next()
+          }
+      } else if(to.matched.some(record => record.meta.guest)) {
+          if (loggedIn()) {
+              api.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
+              next({
+              path: '/',
+              query: { redirect: to.fullPath }
+              })
+          } else {
+              next()
+          }
+      } 
+      else {
+          next() // make sure to always call next()!
+      }
   })
 
   return Router
